@@ -22,8 +22,13 @@ layout, admin review flows) — see `../SKILL.md`.
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
    - `IP_HASH_SALT` — 32+ random chars, **never rotate after launch**
    - `ADMIN_SESSION_SECRET` — 32+ random chars (signs admin session cookies)
-   - `RESEND_API_KEY` + `WAITLIST_EMAIL_FROM` — leave the key empty in dev and all email
-     (including admin OTP codes) is logged to the server console instead
+   - Email: pick ONE transport — generic SMTP (`SMTP_HOST/PORT/USER/PASS`), Gmail/Workspace
+     (`GMAIL_USER` + `GMAIL_APP_PASSWORD`), or Resend (`RESEND_API_KEY`) — all sending as
+     `marketing@ekwa.co` (`WAITLIST_EMAIL_FROM`, `WAITLIST_SUPPORT_EMAIL`,
+     `TEAM_DISTRIBUTION_LIST`). Leave all unset in dev and every email (including admin
+     OTP codes) is logged to the server console instead. Supabase Auth email templates +
+     SMTP for the next phase: see `supabase/email-templates/README.md` (OTP codes, not
+     magic links)
    - `NEXT_PUBLIC_LAUNCH_AT` — ISO datetime the countdown counts to ("founding doors open")
 3. `npm install`, then `npm run dev` (or `npm run build && npm start`).
 

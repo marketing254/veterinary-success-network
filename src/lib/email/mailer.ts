@@ -1,6 +1,12 @@
+import nodemailer from "nodemailer";
+import type { Transporter } from "nodemailer";
+
 /**
- * Email sender. Uses Resend when RESEND_API_KEY is set; otherwise logs to the
- * server console so local development never blocks on email delivery.
+ * Email sender. Pick ONE transport via env (checked in this order):
+ *   1. Generic SMTP  — SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS (use the marketing@ekwa.co mailbox)
+ *   2. Gmail / Google Workspace — GMAIL_USER + GMAIL_APP_PASSWORD (App Password on that account)
+ *   3. Resend — RESEND_API_KEY
+ * If none is set, emails are logged to the server console so dev never blocks on delivery.
  * Email HTML uses inline-safe font stacks only (never the CSS variables).
  */
 export type Mail = {
@@ -11,28 +17,62 @@ export type Mail = {
 };
 
 const FROM = process.env.WAITLIST_EMAIL_FROM || "Veterinary Success Network <marketing@ekwa.co>";
+const SUPPORT = process.env.WAITLIST_SUPPORT_EMAIL || "marketing@ekwa.co";
+
+let smtp: Transporter | null | undefined;
+
+function smtpTransport(): Transporter | null {
+  if (smtp !== undefined) return smtp;
+  if (process.env.SMTP_HOST) {
+    const port = Number(process.env.SMTP_PORT || 465);
+    smtp = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port,
+      secure: port === 465,
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    });
+  } else if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    smtp = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
+    });
+  } else {
+    smtp = null;
+  }
+  return smtp;
+}
 
 export async function sendEmail(mail: Mail): Promise<void> {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
-    console.log(`[email:dev] to=${Array.isArray(mail.to) ? mail.to.join(",") : mail.to} subject="${mail.subject}"`);
-    return;
-  }
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
+  const to = Array.isArray(mail.to) ? mail.to : [mail.to];
+  const replyTo = mail.replyTo || SUPPORT;
+
+  const transport = smtpTransport();
+  if (transport) {
+    await transport.sendMail({
       from: FROM,
-      to: Array.isArray(mail.to) ? mail.to : [mail.to],
+      to: to.join(", "),
       subject: mail.subject,
       html: mail.html,
-      ...(mail.replyTo ? { reply_to: mail.replyTo } : {}),
-    }),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Resend failed: ${res.status} ${body}`);
+      replyTo,
+    });
+    return;
   }
+
+  const key = process.env.RESEND_API_KEY;
+  if (key) {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: FROM, to, subject: mail.subject, html: mail.html, reply_to: replyTo }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      throw new Error(`Resend failed: ${res.status} ${body}`);
+    }
+    return;
+  }
+
+  console.log(`[email:dev] to=${to.join(",")} subject="${mail.subject}"`);
 }
 
 export function emailShell(headline: string, bodyHtml: string): string {

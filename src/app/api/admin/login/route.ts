@@ -58,7 +58,9 @@ export async function POST(req: NextRequest) {
     user_agent: clean(req.headers.get("user-agent"), 400) || null,
   });
 
-  if (!process.env.RESEND_API_KEY) {
+  const emailConfigured =
+    !!process.env.SMTP_HOST || !!process.env.GMAIL_USER || !!process.env.RESEND_API_KEY;
+  if (!emailConfigured) {
     console.log(`[admin-otp:dev] ${email} -> ${code}`);
   }
   await sendEmail({

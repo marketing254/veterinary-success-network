@@ -2,7 +2,7 @@ import { sendEmail, emailShell } from "./mailer";
 
 /** Team distribution list — swap per vertical. */
 export const TEAM_DISTRIBUTION_LIST = (process.env.TEAM_DISTRIBUTION_LIST ||
-  "marketing@ekwa.co")
+  "lester@ekwa.com,rushdha@ekwa.com")
   .split(",")
   .map((e) => e.trim())
   .filter(Boolean);
