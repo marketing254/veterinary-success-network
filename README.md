@@ -24,10 +24,11 @@ layout, admin review flows) — see `../SKILL.md`.
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
    - `IP_HASH_SALT` — 32+ random chars, **never rotate after launch**
    - `ADMIN_SESSION_SECRET` — 32+ random chars (signs admin session cookies)
-   - Email: Rackspace SMTP (`secure.emailsrvr.com:465`), auth as
-     `hello@veterinarysuccessnetwork.com` — one mailbox sends From every same-domain
-     address. Per-purpose senders: `members@` (reservation confirms + welcomes),
-     `support@` (admin codes + team notifications), `hello@` (experts/partners/free-kit).
+   - Email: Rackspace SMTP (`secure.emailsrvr.com`, port 465). The app signs in as the
+     support@ mailbox on the site domain (same-domain send-as lets one mailbox send From
+     every purpose address; the password lives only in env, never in the repo).
+     Per-purpose senders: `members@` (reservation confirms + welcomes), `support@`
+     (admin codes + expert emails + team notifications), `hello@` (partners/free-kit).
      Team notifications go direct to the three Ekwa inboxes (`TEAM_DISTRIBUTION_LIST`).
      `join-vsn.com` (hello@/News@) is marketing-only — the app never sends from it.
      Leave SMTP unset in dev and every email (including admin OTP codes) is logged to

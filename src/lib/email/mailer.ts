@@ -3,7 +3,7 @@ import type { Transporter } from "nodemailer";
 
 /**
  * Email sender. Pick ONE transport via env (checked in this order):
- *   1. Generic SMTP  — SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS (use the marketing@ekwa.co mailbox)
+ *   1. Generic SMTP  — SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASS (the Rackspace support@ mailbox)
  *   2. Gmail / Google Workspace — GMAIL_USER + GMAIL_APP_PASSWORD (App Password on that account)
  *   3. Resend — RESEND_API_KEY
  * If none is set, emails are logged to the server console so dev never blocks on delivery.

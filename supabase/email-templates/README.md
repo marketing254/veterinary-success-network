@@ -14,14 +14,14 @@ admin rows seeded). Steps 1–3 and 6 are dashboard-only — do them once.
    `auth_user_id`/`last_active_at` to `admin_users`, the audit columns, and the
    read-own-row RLS policy.
 
-2. **Custom SMTP** — *Project Settings → Authentication → SMTP Settings* → enable and enter:
-   - Sender email: `support@veterinarysuccessnetwork.com`
-   - Sender name: `Veterinary Success Network`
-   - Host: `secure.emailsrvr.com` · Port: `465`
-   - Username: `support@veterinarysuccessnetwork.com` · Password: from the Rackspace handover
-   - Ignore the "personal email provider" warning (advisory only). The password field is
-     **write-only** — it always displays a stale mask afterwards; judge the save ONLY by the
-     green toast.
+2. **Custom SMTP** — *Project Settings → Authentication → SMTP Settings* → enable it and
+   fill in the same Rackspace values the app uses: host `secure.emailsrvr.com` on port
+   `465`, sender name `Veterinary Success Network`. Both the sender address and the
+   sign-in mailbox are the support@ address on the site domain. The mailbox password
+   comes from the Rackspace handover; it is never written anywhere in this repo.
+   Ignore the "personal email provider" warning (advisory only). The password field is
+   **write-only** — it always displays a stale mask afterwards; judge the save ONLY by
+   the green toast.
 
 3. **Magic Link template** — *Authentication → Emails (Templates) → Magic Link*:
    - Subject: `Your Veterinary Success Network sign-in code: {{ .Token }}`
