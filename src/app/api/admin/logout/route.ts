@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { ADMIN_COOKIE } from "@/lib/adminSession";
+import { supabaseServer } from "@/lib/supabaseServer";
 
 export const runtime = "nodejs";
 
 export async function POST() {
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(ADMIN_COOKIE, "", { httpOnly: true, path: "/", maxAge: 0 });
-  return res;
+  await supabaseServer().auth.signOut();
+  return NextResponse.json({ ok: true });
 }

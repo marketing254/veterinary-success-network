@@ -24,13 +24,14 @@ export default function Footer() {
           </div>
           <div>
             <h5>Agreements</h5>
-            <a href="#">Member Agreement</a>
-            <a href="#">Partner Agreement</a>
+            <Link href="/legal/member-agreement">Member Agreement</Link>
+            <Link href="/legal/expert-agreement">Expert Agreement</Link>
+            <Link href="/legal/partner-agreement">Partner Agreement</Link>
           </div>
           <div>
             <h5>Legal</h5>
-            <a href="#">Cancellation Policy</a>
-            <a href="#">Privacy Policy</a>
+            <Link href="/legal/cancellation-policy">Cancellation Policy</Link>
+            <Link href="/legal/privacy-policy">Privacy Policy</Link>
             <a href="mailto:hello@veterinarysuccessnetwork.com">hello@veterinarysuccessnetwork.com</a>
           </div>
         </div>

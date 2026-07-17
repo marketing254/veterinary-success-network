@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { randomInt } from "crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supabaseAnon } from "@/lib/supabaseServer";
 import { clean, EMAIL_RE } from "@/lib/signup";
 import { rateLimit } from "@/lib/rateLimit";
 import { hashIp, requestIp } from "@/lib/ipHash";
-import { sendEmail, emailShell } from "@/lib/email/mailer";
-import { otpHash } from "@/lib/adminOtp";
+import { sendAdminCodeEmail } from "@/lib/email/confirmations";
 
 export const runtime = "nodejs";
 
+/**
+ * ASN-model admin login: allow-list gate FIRST (no email ever goes to non-admins),
+ * then Supabase sends the 6-digit code (signInWithOtp + {{ .Token }} template).
+ * On ANY Supabase send failure we fall back to generateLink → email_otp → our own
+ * transport, so a broken dashboard SMTP can never lock the team out.
+ */
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
   try {
@@ -37,42 +42,83 @@ export async function POST(req: NextRequest) {
     .ilike("email", email)
     .maybeSingle();
 
-  // Always answer identically so admin emails can't be enumerated.
-  const generic = NextResponse.json({
-    ok: true,
-    message: "If that email belongs to an admin, a sign-in code is on its way.",
-  });
-
-  if (!admin || !admin.active) return generic;
-
-  const code = String(randomInt(100000, 1000000));
-  await db.from("admin_otps").insert({
-    email,
-    code_hash: otpHash(code),
-    expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-  });
-  await db.from("auth_audit").insert({
-    email,
-    event: "otp_requested",
-    ip_hash: hashIp(ip),
-    user_agent: clean(req.headers.get("user-agent"), 400) || null,
-  });
-
-  const emailConfigured =
-    !!process.env.SMTP_HOST || !!process.env.GMAIL_USER || !!process.env.RESEND_API_KEY;
-  if (!emailConfigured) {
-    console.log(`[admin-otp:dev] ${email} -> ${code}`);
+  if (!admin || !admin.active) {
+    return NextResponse.json(
+      { ok: false, error: "That email is not on the admin allow-list." },
+      { status: 403 }
+    );
   }
-  await sendEmail({
-    to: email,
-    subject: `${code} is your VSN admin sign-in code`,
-    html: emailShell(
-      "Your sign-in code",
-      `<p style="font-size:14px;color:#2c3a22;">Enter this code to sign in to the VSN admin portal. It expires in 10 minutes.</p>
-       <p style="font-family:Georgia,serif;font-size:34px;letter-spacing:.25em;color:#1c3310;font-weight:700;margin:18px 0;">${code}</p>
-       <p style="font-size:12.5px;color:#74806a;">If you didn't request this, you can ignore this email.</p>`
-    ),
-  }).catch((err) => console.error("otp email failed:", err));
 
-  return generic;
+  const audit = (event: string, metadata?: Record<string, unknown>) =>
+    db
+      .from("auth_audit")
+      .insert({
+        email,
+        event,
+        user_type: "admin",
+        metadata: metadata || null,
+        ip_hash: hashIp(ip),
+        user_agent: clean(req.headers.get("user-agent"), 400) || null,
+      })
+      .then(({ error }) => error && console.error("auth_audit insert failed:", error.message));
+
+  // Primary: Supabase emails the code (dashboard SMTP + {{ .Token }} Magic Link template).
+  const { error: otpError } = await supabaseAnon().auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false },
+  });
+
+  if (!otpError) {
+    await audit("otp_requested", { sentVia: "supabase" });
+    return NextResponse.json({ ok: true, sentVia: "supabase" });
+  }
+
+  // Supabase's ~60s resend throttle → friendly 429, no double-send.
+  if (otpError.status === 429 || /security purposes|seconds/i.test(otpError.message || "")) {
+    return NextResponse.json(
+      { ok: false, error: "A code was sent recently. Wait a minute, then try again." },
+      { status: 429 }
+    );
+  }
+
+  // Missing auth user (shouldCreateUser:false) → tell the operator exactly what to fix.
+  if (otpError.status === 422 || /signups not allowed/i.test(otpError.message || "")) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          "This admin has no Supabase auth user yet. Create it in Authentication → Users, then retry.",
+      },
+      { status: 422 }
+    );
+  }
+
+  // Fallback: mint the code server-side and send it through our own transport.
+  console.error("Supabase OTP send failed, using fallback:", otpError.message);
+  const { data: linkData, error: linkError } = await db.auth.admin.generateLink({
+    type: "magiclink",
+    email,
+  });
+  const code = linkData?.properties?.email_otp;
+  if (linkError || !code) {
+    console.error("generateLink fallback failed:", linkError?.message);
+    return NextResponse.json(
+      { ok: false, error: "Couldn't send a sign-in code. Check the server logs." },
+      { status: 500 }
+    );
+  }
+
+  try {
+    // NOT fail-soft: login must know if delivery failed.
+    await sendAdminCodeEmail(email, code);
+  } catch (err) {
+    console.error("fallback code email failed:", err);
+    return NextResponse.json(
+      { ok: false, error: "Couldn't email the sign-in code. Check the SMTP settings." },
+      { status: 500 }
+    );
+  }
+
+  await audit("otp_requested", { sentVia: "fallback", reason: otpError.message });
+  return NextResponse.json({ ok: true, sentVia: "fallback" });
 }

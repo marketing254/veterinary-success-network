@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useVsnSubmit, mailtoFallback, SuccessPanel, ErrorPanel, Honeypot } from "./shared";
+import { useVsnSubmit, mailtoFallback, SuccessPanel, ErrorPanel, Honeypot, AgreementCheck } from "./shared";
 import NiceSelect from "./NiceSelect";
 
 export const PARTNER_CATEGORIES = [
@@ -33,6 +33,8 @@ export default function PartnerApplicationForm() {
   const [leadResponseTime, setLeadResponseTime] = useState(RESPONSE_TIMES[1]);
   const [notes, setNotes] = useState("");
   const [bt, setBt] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [agreeErr, setAgreeErr] = useState(false);
 
   const { status, serverMessage, submit } = useVsnSubmit("/api/partner/signup");
 
@@ -45,6 +47,10 @@ export default function PartnerApplicationForm() {
       setCategoryErr(true);
       return;
     }
+    if (!agreed) {
+      setAgreeErr(true);
+      return;
+    }
     submit({
       companyName,
       website,
@@ -55,6 +61,7 @@ export default function PartnerApplicationForm() {
       memberOffer,
       leadResponseTime,
       notes,
+      agreementAccepted: agreed,
       bt,
     });
   }
@@ -154,6 +161,18 @@ export default function PartnerApplicationForm() {
         </label>
         <textarea id="pf-notes" style={{ minHeight: 80 }} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </div>
+
+      <AgreementCheck
+        id="pf-agree"
+        checked={agreed}
+        invalid={agreeErr}
+        onChange={(v) => {
+          setAgreed(v);
+          setAgreeErr(false);
+        }}
+        href="/legal/partner-agreement"
+        label="VSN Partner Agreement"
+      />
 
       <button className="btn solid" type="submit" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Apply for the founding spot →"}

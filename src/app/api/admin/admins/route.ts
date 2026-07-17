@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { requireAdmin, isResponse, logAction } from "@/lib/adminApi";
+import { requireAdmin, requireOwner, isResponse, logAction } from "@/lib/adminApi";
 import { clean, EMAIL_RE } from "@/lib/signup";
 import { notifySignup } from "@/lib/email/teamNotify";
 
@@ -20,7 +20,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await requireAdmin();
+  const session = await requireOwner();
   if (isResponse(session)) return session;
 
   let body: Record<string, unknown>;
@@ -36,9 +36,6 @@ export async function POST(req: NextRequest) {
   if (!EMAIL_RE.test(email) || !fullName) {
     return NextResponse.json({ ok: false, error: "Name and a valid email are required." }, { status: 400 });
   }
-  if (role === "owner" && session.role !== "owner") {
-    return NextResponse.json({ ok: false, error: "Only an owner can add another owner." }, { status: 403 });
-  }
 
   const { data, error } = await supabaseAdmin()
     .from("admin_users")
@@ -52,13 +49,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Insert failed." }, { status: 500 });
   }
 
+  // Create the matching Supabase auth user (codes only, no password). Ignore "already exists".
+  const { error: authErr } = await supabaseAdmin().auth.admin.createUser({
+    email,
+    email_confirm: true,
+  });
+  if (authErr && !/already/i.test(authErr.message)) {
+    console.error("auth user creation failed (create manually in Authentication → Users):", authErr.message);
+  }
+
   await logAction(session.email, "admin_user", data!.id, "add", `${fullName} <${email}> as ${role}`);
   await notifySignup("admin added", { "Added by": session.email, Name: fullName, Email: email, Role: role });
   return NextResponse.json({ ok: true, row: data });
 }
 
 export async function PATCH(req: NextRequest) {
-  const session = await requireAdmin();
+  const session = await requireOwner();
   if (isResponse(session)) return session;
 
   let body: Record<string, unknown>;
@@ -80,8 +86,15 @@ export async function PATCH(req: NextRequest) {
   if (target.email.toLowerCase() === session.email.toLowerCase() && action === "deactivate") {
     return NextResponse.json({ ok: false, error: "You can't deactivate yourself." }, { status: 400 });
   }
-  if (target.role === "owner" && session.role !== "owner") {
-    return NextResponse.json({ ok: false, error: "Only an owner can change an owner." }, { status: 403 });
+  if (target.role === "owner" && action === "deactivate") {
+    const { count } = await db
+      .from("admin_users")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "owner")
+      .eq("active", true);
+    if ((count ?? 0) <= 1) {
+      return NextResponse.json({ ok: false, error: "You can't deactivate the last active owner." }, { status: 400 });
+    }
   }
 
   const { data, error } = await db

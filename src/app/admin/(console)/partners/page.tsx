@@ -42,14 +42,16 @@ export default function PartnersAdminPage() {
         { key: "member_offer", label: "Member offer" },
         { key: "lead_response_time", label: "Lead response time" },
         { key: "notes", label: "Applicant notes" },
+        { key: "agreement_accepted", label: "Partner Agreement accepted" },
+        { key: "agreement_accepted_at", label: "Accepted at", isDate: true },
         { key: "decision_note", label: "Decision note" },
         { key: "reviewed_by", label: "Reviewed by" },
         { key: "reviewed_at", label: "Reviewed at", isDate: true },
       ]}
       actions={[
         { action: "start_review", label: "Start review", when: (s) => s === "new" },
-        { action: "approve", label: "Approve as partner", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true },
-        { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true },
+        { action: "approve", label: "Approve as partner (sends email)", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✕" },
         { action: "restore", label: "Reopen as new", when: (s) => s === "approved" || s === "declined", withNote: true },
       ]}
     />

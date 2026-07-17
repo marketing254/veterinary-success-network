@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
   if (!companyName || !website || !category || !contactName || !memberOffer) {
     return bad("Please fill in every required field.");
   }
+  if (body.agreementAccepted !== true) {
+    return bad("Please read and accept the VSN Partner Agreement to continue.");
+  }
 
   const pre = preflight(req, body, email);
   if (pre.block) return pre.block;
@@ -40,6 +43,8 @@ export async function POST(req: NextRequest) {
       member_offer: memberOffer,
       lead_response_time: clean(body.leadResponseTime, 80) || null,
       notes: clean(body.notes) || null,
+      agreement_accepted: true,
+      agreement_accepted_at: new Date().toISOString(),
       ip_hash: pre.ipHash,
       user_agent: pre.userAgent || null,
       utm: typeof body.utm === "object" && body.utm ? body.utm : {},

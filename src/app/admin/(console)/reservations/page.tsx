@@ -1,12 +1,23 @@
 "use client";
 
-import RecordsPage, { fmtDate, StatusBadge } from "@/components/admin/RecordsPage";
+import RecordsPage, { fmtDate, StatusBadge, Row, ActionResult } from "@/components/admin/RecordsPage";
+
+async function activateMember(row: Row): Promise<ActionResult> {
+  const res = await fetch("/api/admin/members", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reservationId: row.id }),
+  });
+  const data = await res.json();
+  // The reservation row flips to converted server-side; reload the list.
+  return { ok: data.ok, error: data.error };
+}
 
 export default function ReservationsAdminPage() {
   return (
     <RecordsPage
       title="Member reservations"
-      subtitle="Founding-spot waitlist, in arrival order. Spots and the $49 lock go by position. Mark rows invited when you email a checkout link, converted once they've paid."
+      subtitle="Founding-spot waitlist, in arrival order. Activate as founding member creates the member record, flips the reservation to converted, and sends the welcome email."
       endpoint="/api/admin/reservations"
       searchPlaceholder="Search name, email or practice…"
       statusOptions={["reserved", "invited", "converted", "cancelled"]}
@@ -35,12 +46,21 @@ export default function ReservationsAdminPage() {
         { key: "plan", label: "Plan" },
         { key: "billing", label: "Billing" },
         { key: "first_question", label: "First hotline question" },
+        { key: "agreement_accepted", label: "Member Agreement accepted" },
+        { key: "agreement_accepted_at", label: "Accepted at", isDate: true },
         { key: "reviewed_by", label: "Last actioned by" },
         { key: "reviewed_at", label: "Last actioned at", isDate: true },
       ]}
       actions={[
-        { action: "invite", label: "Mark invited (checkout link sent)", variant: "primary", when: (s) => s === "reserved", withNote: true },
-        { action: "convert", label: "Mark converted (paid)", variant: "primary", when: (s) => s === "invited" || s === "reserved", withNote: true },
+        {
+          action: "activate",
+          label: "Activate as founding member",
+          variant: "primary",
+          when: (s) => s === "reserved" || s === "invited",
+          quickLabel: "Activate",
+          run: activateMember,
+        },
+        { action: "invite", label: "Mark invited (checkout link sent)", when: (s) => s === "reserved", withNote: true },
         { action: "cancel", label: "Cancel reservation", variant: "danger", when: (s) => s === "reserved" || s === "invited", withNote: true },
         { action: "restore", label: "Restore to reserved", when: (s) => s === "cancelled", withNote: true },
       ]}

@@ -35,7 +35,8 @@ export default function Brand({ href = "/" }: { href?: string }) {
   return (
     <Link className="brand" href={href}>
       <span className="mark">
-        <PawMark />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/vsn-appicon.png" alt="VSN" width={44} height={44} />
       </span>
       <span>
         <strong>Veterinary Success Network</strong>

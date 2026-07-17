@@ -44,6 +44,11 @@ export default function DashboardPage() {
           <div className="s">{c.reservations_open ?? 0} still reserved · first 100 lock $49</div>
         </div>
         <div className="adm-stat">
+          <div className="v">{c.members_total ?? "…"}</div>
+          <div className="t">Founding members</div>
+          <div className="s">{c.members_active ?? 0} active</div>
+        </div>
+        <div className="adm-stat">
           <div className="v">{c.experts_total ?? "…"}</div>
           <div className="t">Expert applications</div>
           <div className="s">{c.experts_new ?? 0} awaiting review</div>

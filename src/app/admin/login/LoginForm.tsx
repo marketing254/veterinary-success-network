@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PawMark } from "@/components/Brand";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -12,8 +11,8 @@ export default function LoginForm() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
-  async function requestCode(e: FormEvent) {
-    e.preventDefault();
+  async function requestCode(e?: FormEvent) {
+    e?.preventDefault();
     setBusy(true);
     setMsg(null);
     try {
@@ -25,7 +24,7 @@ export default function LoginForm() {
       const data = await res.json();
       if (data.ok) {
         setStep("code");
-        setMsg({ kind: "ok", text: "If that email belongs to an admin, a 6-digit code is on its way." });
+        setMsg({ kind: "ok", text: "A 6-digit code is on its way to your inbox." });
       } else {
         setMsg({ kind: "err", text: data.error || "Something went wrong." });
       }
@@ -61,7 +60,8 @@ export default function LoginForm() {
     <div className="adm-login">
       <div className="formcard">
         <div style={{ width: 52, height: 52, margin: "0 auto 14px" }}>
-          <PawMark />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/vsn-appicon.png" alt="VSN" width={52} height={52} style={{ borderRadius: 12 }} />
         </div>
         <h1>VSN Admin</h1>
         <p className="sub">
@@ -96,6 +96,7 @@ export default function LoginForm() {
                 id="al-code"
                 className="otp"
                 required
+                autoComplete="one-time-code"
                 inputMode="numeric"
                 pattern="\d{6}"
                 maxLength={6}
@@ -106,7 +107,15 @@ export default function LoginForm() {
             <button className="btn solid" type="submit" disabled={busy} style={{ width: "100%", justifyContent: "center" }}>
               {busy ? "Checking…" : "Sign in →"}
             </button>
-            <p className="fnote" style={{ textAlign: "center" }}>
+            <p className="fnote" style={{ textAlign: "center", display: "flex", gap: 18, justifyContent: "center" }}>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => requestCode()}
+                style={{ background: "none", border: "none", color: "var(--deep)", fontWeight: 700, cursor: "pointer", font: "inherit" }}
+              >
+                Resend code
+              </button>
               <button
                 type="button"
                 onClick={() => { setStep("email"); setCode(""); setMsg(null); }}

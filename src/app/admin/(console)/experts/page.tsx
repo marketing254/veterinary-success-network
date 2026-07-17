@@ -33,14 +33,16 @@ export default function ExpertsAdminPage() {
         { key: "existing_content", label: "Existing content" },
         { key: "booking_link", label: "Booking link" },
         { key: "notes", label: "Applicant notes" },
+        { key: "agreement_accepted", label: "Expert Agreement accepted" },
+        { key: "agreement_accepted_at", label: "Accepted at", isDate: true },
         { key: "decision_note", label: "Decision note" },
         { key: "reviewed_by", label: "Reviewed by" },
         { key: "reviewed_at", label: "Reviewed at", isDate: true },
       ]}
       actions={[
         { action: "start_review", label: "Start review", when: (s) => s === "new" },
-        { action: "approve", label: "Approve for the bench", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true },
-        { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true },
+        { action: "approve", label: "Approve for the bench (sends email)", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✕" },
         { action: "restore", label: "Reopen as new", when: (s) => s === "approved" || s === "declined", withNote: true },
       ]}
     />

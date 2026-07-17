@@ -73,6 +73,42 @@ export function ErrorPanel({
   );
 }
 
+export function AgreementCheck({
+  id,
+  checked,
+  onChange,
+  invalid,
+  href,
+  label,
+}: {
+  id: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  invalid?: boolean;
+  href: string;
+  label: string;
+}) {
+  return (
+    <>
+      <div className={`agreerow${invalid ? " invalid" : ""}`}>
+        <input type="checkbox" id={id} checked={checked} onChange={(e) => onChange(e.target.checked)} />
+        <label htmlFor={id}>
+          I have read and agree to the{" "}
+          <a href={href} target="_blank" rel="noopener">
+            {label}
+          </a>
+          . My acceptance is recorded with this submission.
+        </label>
+      </div>
+      {invalid && (
+        <span className="nsel-err" style={{ marginTop: -10, marginBottom: 14 }}>
+          Please read and accept the agreement to continue.
+        </span>
+      )}
+    </>
+  );
+}
+
 export function Honeypot({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <p className="bt-field">

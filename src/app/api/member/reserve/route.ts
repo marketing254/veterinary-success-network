@@ -25,11 +25,14 @@ export async function POST(req: NextRequest) {
   const billing = BILLING.includes(clean(body.billing)) ? clean(body.billing) : "monthly";
 
   if (!fullName || !practiceName || !role) return bad("Please fill in every required field.");
+  if (body.agreementAccepted !== true) {
+    return bad("Please read and accept the VSN Member Agreement to continue.");
+  }
 
   const pre = preflight(req, body, email);
   if (pre.block) return pre.block;
 
-  const { error } = await supabaseAdmin()
+  const { data: inserted, error } = await supabaseAdmin()
     .from("member_reservations")
     .insert({
       full_name: fullName,
@@ -41,10 +44,14 @@ export async function POST(req: NextRequest) {
       first_question: clean(body.firstQuestion) || null,
       plan,
       billing,
+      agreement_accepted: true,
+      agreement_accepted_at: new Date().toISOString(),
       ip_hash: pre.ipHash,
       user_agent: pre.userAgent || null,
       utm: typeof body.utm === "object" && body.utm ? body.utm : {},
-    });
+    })
+    .select("id, position")
+    .maybeSingle();
 
   if (error) {
     if (isUniqueViolation(error)) {
@@ -65,7 +72,13 @@ export async function POST(req: NextRequest) {
     Location: clean(body.location, 160),
     "First hotline question": clean(body.firstQuestion),
   });
-  await sendReservationConfirmation(email, fullName, plan === "founding" ? "Founding ($49/mo)" : plan);
+  await sendReservationConfirmation(
+    email,
+    fullName,
+    plan,
+    inserted?.position ?? null,
+    inserted?.id ?? null
+  );
 
   return ok();
 }

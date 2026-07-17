@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useVsnSubmit, mailtoFallback, SuccessPanel, ErrorPanel, Honeypot } from "./shared";
+import { useVsnSubmit, mailtoFallback, SuccessPanel, ErrorPanel, Honeypot, AgreementCheck } from "./shared";
 import NiceSelect from "./NiceSelect";
 
 const YEARS = ["Under 2 years", "2–5 years", "5–10 years", "10+ years"];
@@ -19,6 +19,8 @@ export default function ExpertApplicationForm() {
   const [existingContent, setExistingContent] = useState(CONTENT[0]);
   const [notes, setNotes] = useState("");
   const [bt, setBt] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [agreeErr, setAgreeErr] = useState(false);
 
   const { status, serverMessage, submit } = useVsnSubmit("/api/expert/signup");
 
@@ -28,7 +30,23 @@ export default function ExpertApplicationForm() {
       setYearsErr(true);
       return;
     }
-    submit({ fullName, email, company, website, topics, years, bookingLink, existingContent, notes, bt });
+    if (!agreed) {
+      setAgreeErr(true);
+      return;
+    }
+    submit({
+      fullName,
+      email,
+      company,
+      website,
+      topics,
+      years,
+      bookingLink,
+      existingContent,
+      notes,
+      agreementAccepted: agreed,
+      bt,
+    });
   }
 
   if (status === "success") {
@@ -127,6 +145,18 @@ export default function ExpertApplicationForm() {
         </label>
         <textarea id="ef-notes" style={{ minHeight: 80 }} value={notes} onChange={(e) => setNotes(e.target.value)} />
       </div>
+
+      <AgreementCheck
+        id="ef-agree"
+        checked={agreed}
+        invalid={agreeErr}
+        onChange={(v) => {
+          setAgreed(v);
+          setAgreeErr(false);
+        }}
+        href="/legal/expert-agreement"
+        label="VSN Expert Agreement"
+      />
 
       <button className="btn solid" type="submit" disabled={status === "sending"}>
         {status === "sending" ? "Sending…" : "Submit my application →"}

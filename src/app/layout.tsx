@@ -16,9 +16,10 @@ export const metadata: Metadata = {
     "The only veterinary network where every practice problem gets a written action plan in 2–3 business days, plus a growing resource library, member-only partner deals, live AMAs & CE, and a community of owners. Powered by Veterinary Business Institute.",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-48.png", type: "image/png", sizes: "48x48" },
     ],
+    shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {

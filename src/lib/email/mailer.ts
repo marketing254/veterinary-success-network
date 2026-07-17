@@ -13,11 +13,36 @@ export type Mail = {
   to: string | string[];
   subject: string;
   html: string;
+  /** Plain-text alternative (deliverability). */
+  text?: string;
   replyTo?: string;
+  /** Override the From address per message (e.g. per-purpose senders). */
+  from?: string;
 };
 
-const FROM = process.env.WAITLIST_EMAIL_FROM || "Veterinary Success Network <marketing@ekwa.co>";
-const SUPPORT = process.env.WAITLIST_SUPPORT_EMAIL || "marketing@ekwa.co";
+const FROM =
+  process.env.WAITLIST_EMAIL_FROM || "Veterinary Success Network <hello@veterinarysuccessnetwork.com>";
+const SUPPORT = process.env.WAITLIST_SUPPORT_EMAIL || "support@veterinarysuccessnetwork.com";
+
+/**
+ * Per-purpose sender addresses (real Rackspace mailboxes, created 2026-07-15).
+ * Rackspace allows same-domain send-as, so the ONE auth mailbox (SMTP_USER,
+ * hello@veterinarysuccessnetwork.com) sends From every address below.
+ * members@ = member journey · support@ = admin codes + ops + expert emails (experts@
+ * doesn't exist) · hello@ = partner emails + free-kit (until partners@ exists).
+ */
+export function purposeFrom(purpose: "members" | "experts" | "partners" | "support"): string {
+  const map: Record<string, string | undefined> = {
+    members:
+      process.env.MEMBERS_EMAIL_FROM || "Veterinary Success Network <members@veterinarysuccessnetwork.com>",
+    experts:
+      process.env.EXPERTS_EMAIL_FROM || "Veterinary Success Network <support@veterinarysuccessnetwork.com>",
+    partners: process.env.PARTNERS_EMAIL_FROM,
+    support:
+      process.env.SUPPORT_EMAIL_FROM || "Veterinary Success Network <support@veterinarysuccessnetwork.com>",
+  };
+  return map[purpose] || FROM;
+}
 
 let smtp: Transporter | null | undefined;
 
@@ -45,14 +70,16 @@ function smtpTransport(): Transporter | null {
 export async function sendEmail(mail: Mail): Promise<void> {
   const to = Array.isArray(mail.to) ? mail.to : [mail.to];
   const replyTo = mail.replyTo || SUPPORT;
+  const from = mail.from || FROM;
 
   const transport = smtpTransport();
   if (transport) {
     await transport.sendMail({
-      from: FROM,
+      from,
       to: to.join(", "),
       subject: mail.subject,
       html: mail.html,
+      ...(mail.text ? { text: mail.text } : {}),
       replyTo,
     });
     return;
@@ -63,7 +90,14 @@ export async function sendEmail(mail: Mail): Promise<void> {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: FROM, to, subject: mail.subject, html: mail.html, reply_to: replyTo }),
+      body: JSON.stringify({
+        from,
+        to,
+        subject: mail.subject,
+        html: mail.html,
+        ...(mail.text ? { text: mail.text } : {}),
+        reply_to: replyTo,
+      }),
     });
     if (!res.ok) {
       const body = await res.text().catch(() => "");

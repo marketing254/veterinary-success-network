@@ -15,6 +15,13 @@ export type EntityConfig = {
   review: boolean;
   /** table has decision_note column */
   decisionNote?: boolean;
+  /** called after a successful status change, with the row's status BEFORE the update */
+  afterAction?: (
+    adminEmail: string,
+    row: Record<string, any>,
+    action: string,
+    priorStatus: string
+  ) => Promise<void>;
 };
 
 export function makeHandlers(cfg: EntityConfig) {
@@ -67,6 +74,10 @@ export function makeHandlers(cfg: EntityConfig) {
       return NextResponse.json({ ok: false, error: "Unknown action." }, { status: 400 });
     }
 
+    const db = supabaseAdmin();
+    const { data: prior } = await db.from(cfg.table).select("status").eq("id", id).maybeSingle();
+    if (!prior) return NextResponse.json({ ok: false, error: "Not found." }, { status: 404 });
+
     const update: Record<string, unknown> = { status: newStatus };
     if (cfg.review) {
       update.reviewed_by = session.email;
@@ -74,12 +85,7 @@ export function makeHandlers(cfg: EntityConfig) {
     }
     if (cfg.decisionNote && note) update.decision_note = note;
 
-    const { data, error } = await supabaseAdmin()
-      .from(cfg.table)
-      .update(update)
-      .eq("id", id)
-      .select()
-      .maybeSingle();
+    const { data, error } = await db.from(cfg.table).update(update).eq("id", id).select().maybeSingle();
 
     if (error || !data) {
       console.error(`${cfg.table} update failed:`, error);
@@ -87,6 +93,13 @@ export function makeHandlers(cfg: EntityConfig) {
     }
 
     await logAction(session.email, cfg.entityType, id, action, note || undefined);
+    if (cfg.afterAction) {
+      try {
+        await cfg.afterAction(session.email, data, action, prior.status);
+      } catch (err) {
+        console.error(`${cfg.table} afterAction failed (action still applied):`, err);
+      }
+    }
     return NextResponse.json({ ok: true, row: data });
   }
 

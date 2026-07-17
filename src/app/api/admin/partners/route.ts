@@ -1,4 +1,6 @@
 import { makeHandlers } from "@/lib/adminRecords";
+import { sendPartnerApproval } from "@/lib/email/confirmations";
+import { notifySignup } from "@/lib/email/teamNotify";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,6 +12,19 @@ const handlers = makeHandlers({
   orderBy: { column: "created_at", ascending: false },
   review: true,
   decisionNote: true,
+  // Approval email fires ONLY on the first transition into approved.
+  afterAction: async (adminEmail, row, action, priorStatus) => {
+    if (action === "approve" && priorStatus !== "approved") {
+      await sendPartnerApproval(row.email, row.contact_name, row.company_name);
+      await notifySignup("partner approval", {
+        Company: row.company_name,
+        Contact: row.contact_name,
+        Email: row.email,
+        Category: row.category,
+        "Approved by": adminEmail,
+      });
+    }
+  },
   actions: {
     start_review: "in_review",
     approve: "approved",

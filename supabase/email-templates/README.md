@@ -1,39 +1,61 @@
-# Supabase email setup (OTP codes, not magic links)
+# Admin sign-in (Supabase Auth OTP) — dashboard setup guide
 
-## What sends what
+The admin console signs in with 6-digit codes issued by **Supabase Auth** (ASN model):
+an admin = a Supabase **auth user** + an active **`admin_users`** row, matched by email.
+Primary delivery is Supabase's own SMTP; if that fails, the app mints the code itself
+(`generateLink` → `email_otp`) and emails it through Rackspace — nobody gets locked out.
 
-- **This app sends its own email** (signup confirmations, team notifications, and the
-  **admin portal's OTP codes**) through the transport configured in env
-  (SMTP / Gmail / Resend as `marketing@ekwa.co`). Supabase is not involved in those.
-- **Supabase Auth emails** only fire if/when Supabase Auth users sign in by email —
-  that starts in the next phase (member/expert/partner portal accounts). Configure it
-  now so it's ready and consistent.
+## One-time checklist (Supabase Dashboard)
 
-## 1. SMTP — send as marketing@ekwa.co
+Status for this project as of 2026-07-17: steps 4–5 are DONE (auth users created via API,
+admin rows seeded). Steps 1–3 and 6 are dashboard-only — do them once.
 
-Supabase Dashboard → **Project Settings → Authentication → SMTP Settings** → enable
-Custom SMTP and enter the same mailbox the app uses:
+1. **Run migration `0009_supabase_auth_admin.sql`** (SQL editor) — adds
+   `auth_user_id`/`last_active_at` to `admin_users`, the audit columns, and the
+   read-own-row RLS policy.
 
-- Sender email: `marketing@ekwa.co`
-- Sender name: `Veterinary Success Network`
-- Host / Port / Username / Password: same values as `SMTP_HOST/PORT/USER/PASS` in env
+2. **Custom SMTP** — *Project Settings → Authentication → SMTP Settings* → enable and enter:
+   - Sender email: `support@veterinarysuccessnetwork.com`
+   - Sender name: `Veterinary Success Network`
+   - Host: `secure.emailsrvr.com` · Port: `465`
+   - Username: `support@veterinarysuccessnetwork.com` · Password: from the Rackspace handover
+   - Ignore the "personal email provider" warning (advisory only). The password field is
+     **write-only** — it always displays a stale mask afterwards; judge the save ONLY by the
+     green toast.
 
-Without custom SMTP, Supabase's built-in sender is heavily rate-limited (a few emails
-per hour) and lands in spam — always set this before real traffic.
+3. **Magic Link template** — *Authentication → Emails (Templates) → Magic Link*:
+   - Subject: `Your Veterinary Success Network sign-in code: {{ .Token }}`
+   - Body: paste `admin-otp-email.html` (this folder). The **`{{ .Token }}`** is what makes
+     Supabase send a code instead of a link — if a magic LINK arrives, this template didn't
+     save.
 
-## 2. Make sign-in emails OTP codes instead of magic links
+4. **Auth users** — *Authentication → Users*: every admin email needs an auth user
+   (no password; codes only). ✅ Already created for lester@ekwa.com, rushdha@ekwa.com,
+   fathimarushdhaakbar28@gmail.com. Adding an admin from `/admin/admins` now auto-creates
+   the auth user too.
 
-Supabase sends a code instead of a link purely based on the template contents:
+5. **`admin_users` rows** — the allow-list. ✅ Seeded (Lester owner; Rushdha ×2 admin).
+   An email that's an auth user but NOT an active `admin_users` row is refused before any
+   email is sent.
 
-1. Dashboard → **Authentication → Email Templates → Magic Link**
-2. Subject: `Your Veterinary Success Network sign-in code`
-3. Replace the body with `magic-link-otp.html` (this folder). The key line is
-   `{{ .Token }}` — using the token (and not `{{ .ConfirmationURL }}`) is what makes
-   it an OTP email.
-4. Repeat for the **Email OTP** template if your dashboard shows one separately.
-5. Dashboard → **Authentication → Providers → Email**: set OTP expiry (3600s is fine)
-   and keep "Confirm email" per your flow.
+6. **Auth settings** — *Authentication → Providers → Email*: OTP expiry 600s is a good
+   default. *Authentication → URL Configuration*: Site URL =
+   `https://www.veterinarysuccessnetwork.com`.
 
-The client code for that phase must then call
-`supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } })` and verify with
-`supabase.auth.verifyOtp({ email, token, type: "email" })` — no magic-link redirect handling.
+## Env (local + Vercel)
+
+`NEXT_PUBLIC_SUPABASE_ANON_KEY` (Settings → API → anon public) is now **required** for
+admin sign-in, alongside the existing URL/service-role/SMTP vars. `ADMIN_SESSION_SECRET`
+is no longer used (sessions are Supabase cookies).
+
+## How the flow behaves (for debugging)
+
+- Unknown/inactive email → "not on the admin allow-list", **no email sent**.
+- Supabase send OK → response `sentVia: "supabase"`.
+- Supabase send fails → app sends the code itself, response `sentVia: "fallback"`
+  (reason in server logs).
+- "A code was sent recently" → Supabase's ~60s resend throttle, not an error.
+- 422 "no auth user yet" → create the user in Authentication → Users.
+- Codes verify as type `email` first, then `magiclink` (covers both delivery paths).
+- Every sign-in lands in `auth_audit`; the first sign-in links `admin_users.auth_user_id`.
+- Deactivating an admin blocks them on their next request (middleware + guards re-check).
