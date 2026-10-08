@@ -29,3 +29,10 @@ Thumbs.db
 
 # test output
 coverage/
+
+# owner decision files (untracked)
+VSN-SWAP-CANON.md
+VSN-TEST-CASES.md
+VSN-ENV.md
+tsconfig.check.json
+supabase/seed.local.sql

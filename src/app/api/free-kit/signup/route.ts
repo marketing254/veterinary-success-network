@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { clean, ok, bad, preflight, isUniqueViolation } from "@/lib/signup";
+import { clean, ok, bad, preflight, isUniqueViolation, signupDb } from "@/lib/signup";
 import { notifySignup } from "@/lib/email/teamNotify";
 import { sendFreeKitConfirmation } from "@/lib/email/confirmations";
 
@@ -21,7 +20,10 @@ export async function POST(req: NextRequest) {
   const pre = preflight(req, body, email);
   if (pre.block) return pre.block;
 
-  const { error } = await supabaseAdmin()
+  const conn = signupDb();
+  if (conn.block) return conn.block;
+
+  const { error } = await conn.db
     .from("free_kit_signups")
     .insert({
       full_name: fullName,
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
     });
 
   if (error) {
-    if (isUniqueViolation(error)) return ok("You're already on the list — the kit is coming your way.");
+    if (isUniqueViolation(error)) return ok("You're already on the list. The kit is coming your way.");
     console.error("free-kit insert failed:", error);
     return bad("Something went wrong on our side. Please try again.", 500);
   }

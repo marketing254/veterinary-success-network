@@ -41,7 +41,8 @@ export default function ExpertsAdminPage() {
       ]}
       actions={[
         { action: "start_review", label: "Start review", when: (s) => s === "new" },
-        { action: "approve", label: "Approve for the bench (sends email)", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "approve", label: "Approve (public ramp email)", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "approve_founding", label: "Approve as FOUNDING expert (private free-for-life email)", when: (s) => s === "new" || s === "in_review", withNote: true },
         { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✕" },
         { action: "restore", label: "Reopen as new", when: (s) => s === "approved" || s === "declined", withNote: true },
       ]}

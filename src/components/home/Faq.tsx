@@ -17,7 +17,7 @@ const QA: [string, string][] = [
   ],
   [
     "What is the founding member rate?",
-    "The first 100 members join at $49/mo (or $490/yr), locked for life: it never increases while you stay a member. After the first 100, pricing steps to $99/mo, then $199/mo standard.",
+    "The first 100 members join at $29/mo (or $290/yr), locked for life: it never increases while you stay a member. After the first 100, the standard rate is $99/mo (or $990/yr).",
   ],
   [
     "What if I'm not ready to join yet?",
@@ -33,7 +33,7 @@ const QA: [string, string][] = [
   ],
   [
     "Can I cancel anytime?",
-    "Yes. Cancel anytime, and there's a money-back guarantee if the membership isn't right for you.",
+    "Yes. Cancel anytime, and there's a 30-day money-back guarantee if the membership isn't right for you.",
   ],
   [
     "Do you store patient data?",

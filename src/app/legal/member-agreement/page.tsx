@@ -41,10 +41,9 @@ export default function MemberAgreementPage() {
       <h2>3. Pricing and Auto-Renewal</h2>
       <p>Membership pricing:</p>
       <ul>
-        <li>Founding members (first 100): $49/month, locked for life while continuously active.</li>
-        <li>Members 101 to 500: $99/month.</li>
-        <li>Standard: $199/month.</li>
-        <li>Annual: $490/year (equivalent to 2 months free).</li>
+        <li>Founding members (first 100): $29/month or $290/year, locked for life while continuously active.</li>
+        <li>Standard: $99/month or $990/year.</li>
+        <li>Annual plans are equivalent to 2 months free.</li>
       </ul>
       <p>
         Memberships auto-renew (monthly or annually, per the plan selected) unless cancelled before

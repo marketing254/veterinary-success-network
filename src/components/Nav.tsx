@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Brand from "./Brand";
+import SignInMenu from "./SignInMenu";
 
 type NavProps = {
   variant?: "home" | "default";
@@ -36,11 +37,9 @@ export default function Nav({ variant = "default", active, cta }: NavProps) {
               </Link>
             </>
           )}
-          {cta !== null && (
-            <Link className="btn solid" href={cta?.href ?? "/join"}>
-              {cta?.label ?? "Become a member"}
-            </Link>
-          )}
+          {/* Sign in replaces the old CTA on every page (owner request 2026-10-07); `cta` is kept so callers need no change. */}
+          <SignInMenu />
+          {cta === null ? null : null}
         </div>
       </div>
     </nav>

@@ -8,8 +8,8 @@ const PLANS = [
     feat: true,
     tag: "Founding · first 100",
     cap: "Founding member",
-    mo: 49,
-    yr: 490,
+    mo: 29,
+    yr: 290,
     d: "Price locked for life + founding badge in the member directory.",
     href: "/join?plan=founding",
     label: "Become a founding member",
@@ -18,21 +18,10 @@ const PLANS = [
   {
     feat: false,
     tag: null,
-    cap: "Members 101–500",
+    cap: "Standard",
     mo: 99,
     yr: 990,
-    d: "Early-member rate while the network grows.",
-    href: "/join?plan=early",
-    label: "Join",
-    solid: false,
-  },
-  {
-    feat: false,
-    tag: null,
-    cap: "Standard",
-    mo: 199,
-    yr: 1990,
-    d: "Full access to the whole network.",
+    d: "Full access to the whole network, after the first 100 founding spots are gone.",
     href: "/join?plan=standard",
     label: "Join",
     solid: false,
@@ -76,7 +65,7 @@ export default function PricingCards() {
         ))}
       </div>
 
-      <div className="prices">
+      <div className="prices" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", maxWidth: 760, marginLeft: "auto", marginRight: "auto" }}>
         {PLANS.map((p) => (
           <div className={`pcard${p.feat ? " feat" : ""} reveal`} key={p.cap}>
             {p.tag && <div className="tag">{p.tag}</div>}

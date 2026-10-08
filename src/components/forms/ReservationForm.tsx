@@ -62,7 +62,7 @@ export default function ReservationForm() {
     return (
       <SuccessPanel title="Your founding reservation is in.">
         {serverMessage ||
-          "We'll confirm by email shortly. When founding doors open you'll get your secure checkout link; your spot and the $49/mo lock are held in reservation order. No payment was taken today."}
+          "We'll confirm by email shortly. When founding doors open you'll get your secure checkout link; your spot and the $29/mo lock are held in reservation order. No payment was taken today."}
       </SuccessPanel>
     );
   }
@@ -77,19 +77,13 @@ export default function ReservationForm() {
           <label className="opt">
             <input type="radio" name="plan" checked={plan === "founding"} onChange={() => setPlan("founding")} />
             <span>
-              Founding <small>$49/mo · first 100</small>
-            </span>
-          </label>
-          <label className="opt">
-            <input type="radio" name="plan" checked={plan === "early"} onChange={() => setPlan("early")} />
-            <span>
-              101–500 <small>$99/mo</small>
+              Founding <small>$29/mo · first 100</small>
             </span>
           </label>
           <label className="opt">
             <input type="radio" name="plan" checked={plan === "standard"} onChange={() => setPlan("standard")} />
             <span>
-              Standard <small>$199/mo</small>
+              Standard <small>$99/mo</small>
             </span>
           </label>
         </div>
@@ -194,7 +188,7 @@ export default function ReservationForm() {
       </button>
       <p className="fnote">
         No payment today and no card required. Reserving holds your spot; you only pay when you
-        complete checkout after doors open. Cancel anytime · money-back guarantee.
+        complete checkout after doors open. Cancel anytime · 30-day money-back guarantee.
       </p>
       {status === "error" && (
         <ErrorPanel

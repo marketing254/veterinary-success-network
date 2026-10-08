@@ -7,6 +7,7 @@ import NiceSelect from "./NiceSelect";
 export const PARTNER_CATEGORIES = [
   "Veterinary supplies & distributors",
   "Equipment & clinic build-outs",
+  "Marketing & growth",
   "Practice-management software",
   "Billing & credentialing",
   "HR, payroll & compliance",
@@ -178,7 +179,7 @@ export default function PartnerApplicationForm() {
         {status === "sending" ? "Sending…" : "Apply for the founding spot →"}
       </button>
       <p className="fnote">
-        Founding partners lock the ramp ($0 for 6 months → $49 → $199) and priority placement in
+        Founding partners lock the ramp ($0 for 6 months, then $39/mo for 12 months, then $149) and priority placement in
         the directory launch. Leads route by fit, never pay-to-play.
       </p>
       {status === "error" && (

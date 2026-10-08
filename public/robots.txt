@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /expert/
+Disallow: /partner/
+Disallow: /dashboard/
+Disallow: /founding/
+Disallow: /invite/
+Disallow: /welcome
 
-Sitemap: https://veterinarysuccessnetwork.com/sitemap.xml
+Sitemap: https://www.veterinarysuccessnetwork.com/sitemap.xml

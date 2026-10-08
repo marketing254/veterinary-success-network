@@ -117,3 +117,43 @@ hotline is "written reply in 2–3 business days", never "live"/"24/7".
 - Stripe checkout for the post-waitlist phase.
 - Real agreement PDFs for the footer links (adapt DMN Agreement v4).
 - Toll-free hotline number, real logo, real reviews.
+
+---
+
+## Portals, admin console and billing (Phases 1 to 6, October 2026)
+
+Branch `feat/asn-replication-vsn`. The public site and its three forms are unchanged; everything below is additive.
+Owner files at the repo root (gitignored): `VSN-SWAP-CANON.md` (decisions), `VSN-ENV.md` (every env variable),
+`VSN-TEST-CASES.md` (the test plan). They win over this README when they disagree.
+
+### What exists
+- **Expert portal** `/expert` (dark sidebar UI): dashboard, profile + headshot, agreement (sign-and-pay), kits, network feed, inquiries, referrals, billing, settings.
+- **Partner portal** `/partner` (light top-nav UI): overview, company profile + logo, catalog, offers, inquiries, analytics, redemptions, referrals, account & billing, agreement. Covered companies share a principal's billing. Dual accounts switch between portals.
+- **Admin console** `/admin` (veterinary re-skin): waitlist + launch email, members, expert and partner applications, live experts and partners, founding invites (`/founding/<code>`), invite links (`/invite/<code>`), review queues (kits, catalog, offers), inquiries triage, redemptions, feed broadcast, referrals, Stripe status, email drafts, admin team, audit log.
+- **Billing**: Stripe sign-and-pay on every agreement, free founding months as a trial, ladder schedules for partners, webhook, daily reminder cron, member pay-first Checkout (only when `MEMBER_LAUNCH_ENABLED=true`).
+- **Public**: `/experts/<id>` and `/partners/<id>` profiles, `/api/directory/*`, `?ref=` referral cookie.
+
+### Current focus (owner decision 2026-10-07)
+Experts and partners first. Members stay on the waitlist; the member portal comes later. Keep
+`MEMBER_LAUNCH_ENABLED=false` and `NEXT_PUBLIC_MEMBER_LAUNCH_ENABLED=false` until then. Members get
+only the waitlist confirmation; admins activate them from the console when the portal is ready.
+
+### Setup
+1. Supabase SQL editor: run `supabase/migrations/0010` through `0019` in order (after 0001 to 0009).
+2. Env: `VSN-ENV.md` lists every variable by phase. `EMAIL_SANDBOX=true` everywhere except Vercel Production.
+3. Stripe: `node scripts/stripe-setup-test.mjs` (test), paste the 11 price lines, `stripe listen --forward-to localhost:3000/api/stripe/webhook`, check `/admin/stripe-status`. For production run `--live` with `STRIPE_LIVE_SECRET_KEY` and add the dashboard webhook at `https://www.veterinarysuccessnetwork.com/api/stripe/webhook`.
+4. When the launch date is decided: set `MEMBER_LAUNCH_DATE`, then `node scripts/stripe-sync-free-period.mjs` (dry run, then `--apply`).
+
+### Before every handover
+```
+npm run lint
+npx tsc -p tsconfig.check.json --noEmit    # tsconfig.check.json = {"extends":"./tsconfig.json","include":["src/**/*.ts","src/**/*.tsx"],"exclude":["node_modules",".next"]}
+npx next build
+```
+
+### Security notes
+- Middleware sets CSP, HSTS, frame and referrer headers on every response and gates `/admin`, `/expert`, `/partner` and their APIs.
+- Every route guard re-selects rows by the caller's own id; privileged columns on `experts`, `partners` and `members` are pinned by triggers against browser writes.
+- `IP_HASH_SALT` is required in production (the app throws without it). `NEXT_PUBLIC_SUPABASE_ANON_KEY` is required in production.
+- Errors never return internal messages; the browser sees generic copy.
+- `EMAIL_AUDIT_BCC` carries staff copies; staff addresses never appear in bodies.

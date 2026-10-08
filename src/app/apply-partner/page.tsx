@@ -54,9 +54,9 @@ export default function ApplyPartnerPage() {
                 <li>$50 credit for every paying member you refer</li>
               </ul>
               <div className="fine">
-                <b>What it costs:</b> $0 for months 1–6, then $49/mo (months 7–12), then $199/mo
-                Featured Partner, with the same benefits at every phase. Annual pre-pay unlocks at
-                month 7.
+                <b>What it costs:</b> $0 for your first 6 months from member launch, then $39/mo
+                for 12 months, then $149/mo Featured Partner, with the same benefits at every
+                phase. Annual pre-pay unlocks at month 7.
               </div>
             </aside>
           </div>

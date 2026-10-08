@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     "activate",
     reservationId ? `from reservation ${reservationId}` : "manual activation"
   );
-  await sendMemberWelcome(String(member.email), String(member.full_name), position);
+  await sendMemberWelcome(String(member.email), String(member.full_name));
   await notifySignup("member activation", {
     Member: String(member.full_name),
     Email: String(member.email),

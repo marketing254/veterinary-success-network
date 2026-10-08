@@ -42,8 +42,8 @@ const GETS: [React.ReactNode, string, string][] = [
   ],
   [
     <path key="p" d="M12 3l2.5 5 5.5.8-4 4 1 5.5L12 20l-5 2.8 1-5.5-4-4 5.5-.8z" />,
-    "Sell your own courses",
-    "List paid courses to members and keep 70% of the revenue.",
+    "Promote your own services",
+    "Members who reach out book you directly. Your fees stay yours.",
   ],
   [
     <path key="p" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
@@ -76,7 +76,7 @@ export default function ExpertsPage() {
           <div className="trustline">
             <span>✓ <b>We do the production</b></span>
             <span>✓ <b>We bring the audience</b></span>
-            <span>✓ <b>Keep 70% of course sales</b></span>
+            <span>✓ <b>Members book you directly</b></span>
           </div>
           <div className="fstrip">
             <Cat className="f1" />
@@ -100,14 +100,21 @@ export default function ExpertsPage() {
           </div>
           <div className="pplgrid">
             <div className="ppl reveal">
-              <span className="av open">+</span>
+              <span className="av photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/team/naren-arulrajah.jpg" alt="Naren Arulrajah" />
+              </span>
               <div>
-                <b>Founding Expert: announcing soon</b>
-                <div className="role">Practice growth · Team · Finance</div>
+                <b>Naren Arulrajah</b>
+                <div className="role">Marketing &amp; Growth · Founder &amp; CEO, Ekwa Marketing</div>
                 <p>
-                  Hand-picked coaches and consultants with real veterinary operating experience.
-                  Announced as each founding seat is confirmed.
+                  Built Ekwa Marketing into the team that helps veterinary, dental and medical
+                  practices get found, get liked and get chosen. Speaker, author and podcast host who
+                  teaches the same growth system in public.
                 </p>
+                <a className="ppl-link" href="https://www.narenarulrajah.com/" target="_blank" rel="noreferrer">
+                  narenarulrajah.com
+                </a>
               </div>
             </div>
             <div className="ppl reveal">
@@ -211,10 +218,10 @@ export default function ExpertsPage() {
             <div className="h2">Build first. Pay once it&apos;s working.</div>
             <p className="lead">Same Featured Expert benefits at every phase. Annual pre-pay unlocks at month 7.</p>
           </div>
-          <div className="prices">
+          <div className="prices" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", maxWidth: 760, marginLeft: "auto", marginRight: "auto" }}>
             <div className="pcard feat reveal">
-              <div className="tag">Months 1–6</div>
-              <div className="cap">Founding-cohort waiver</div>
+              <div className="tag">First 6 months from member launch</div>
+              <div className="cap">Free founding months</div>
               <div className="amt">$0</div>
               <div className="d">Get set up, build your library, get featured, all before you pay anything.</div>
               <Link className="btn solid" href="/apply-expert" style={{ width: "100%", justifyContent: "center" }}>
@@ -222,17 +229,9 @@ export default function ExpertsPage() {
               </Link>
             </div>
             <div className="pcard reveal">
-              <div className="cap">Months 7–12</div>
-              <div className="amt">$49<span>/mo</span></div>
-              <div className="d">Locked launch rate.</div>
-              <Link className="btn glass" href="/apply-expert" style={{ width: "100%", justifyContent: "center" }}>
-                Apply
-              </Link>
-            </div>
-            <div className="pcard reveal">
-              <div className="cap">Month 13+</div>
-              <div className="amt">$199<span>/mo</span></div>
-              <div className="d">Standard rate · or $1,990/yr (2 months free).</div>
+              <div className="cap">After that</div>
+              <div className="amt">$39<span>/mo</span></div>
+              <div className="d">Flat rate, no increase · or $390/yr (2 months free).</div>
               <Link className="btn glass" href="/apply-expert" style={{ width: "100%", justifyContent: "center" }}>
                 Apply
               </Link>
@@ -240,8 +239,8 @@ export default function ExpertsPage() {
           </div>
           <div className="guarantee reveal">
             <PawGlyph className="ipaw" />
-            <b>Course revenue split: keep 70%.</b> Sell your own paid courses through VSN; the
-            network keeps 30%.
+            <b>Your fees stay yours.</b> Members who reach out through your profile book and pay
+            you directly; VSN takes nothing from that work.
           </div>
         </div>
       </section>

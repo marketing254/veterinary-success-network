@@ -146,14 +146,21 @@ export default function PartnersPage() {
           </div>
           <div className="pplgrid">
             <div className="ppl reveal">
-              <span className="av">EK</span>
+              <span className="av logo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/ekwa-logo.png" alt="Ekwa Marketing" />
+              </span>
               <div>
-                <b>Ekwa Marketing</b>
-                <div className="role">Marketing · Client acquisition</div>
+                <b>Ekwa Marketing Inc.</b>
+                <div className="role">Marketing · Client acquisition · Verified Partner</div>
                 <p>
-                  20+ years of healthcare-practice marketing: SEO, websites and patient acquisition.
+                  Helps healthcare practices attract more clients, grow their online presence and
+                  build stronger, more profitable businesses through digital marketing.
                   Founding member offer: <b>$250 off each of the first 2 months.</b>
                 </p>
+                <a className="ppl-link" href="https://www.ekwa.com/" target="_blank" rel="noreferrer">
+                  ekwa.com
+                </a>
               </div>
             </div>
             <div className="ppl reveal">
@@ -293,8 +300,8 @@ export default function PartnersPage() {
           </div>
           <div className="prices">
             <div className="pcard feat reveal">
-              <div className="tag">Months 1–6</div>
-              <div className="cap">Founding-cohort waiver</div>
+              <div className="tag">First 6 months from member launch</div>
+              <div className="cap">Free founding months</div>
               <div className="amt">$0</div>
               <div className="d">Build your pipeline first, pay later.</div>
               <Link className="btn solid" href="/apply-partner" style={{ width: "100%", justifyContent: "center" }}>
@@ -302,17 +309,17 @@ export default function PartnersPage() {
               </Link>
             </div>
             <div className="pcard reveal">
-              <div className="cap">Months 7–12</div>
-              <div className="amt">$49<span>/mo</span></div>
-              <div className="d">Founding locked rate.</div>
+              <div className="cap">Next 12 months</div>
+              <div className="amt">$39<span>/mo</span></div>
+              <div className="d">Founding launch rate.</div>
               <Link className="btn glass" href="/apply-partner" style={{ width: "100%", justifyContent: "center" }}>
                 Apply
               </Link>
             </div>
             <div className="pcard reveal">
-              <div className="cap">Month 13+</div>
-              <div className="amt">$199<span>/mo</span></div>
-              <div className="d">Featured Partner rate · or $1,990/yr (2 months free).</div>
+              <div className="cap">After that</div>
+              <div className="amt">$149<span>/mo</span></div>
+              <div className="d">Featured Partner rate · or $1,490/yr (2 months free).</div>
               <Link className="btn glass" href="/apply-partner" style={{ width: "100%", justifyContent: "center" }}>
                 Apply
               </Link>
@@ -380,7 +387,7 @@ export default function PartnersPage() {
           <div className="cta reveal" id="apply">
             <h2>Become a founding partner.</h2>
             <p>
-              Apply now to lock the founding ramp ($0 for 6 months) and priority placement in the
+              Apply now to lock the founding ramp ($0 for 6 months, then $39/mo) and priority placement in the
               directory launch.
             </p>
             <Link

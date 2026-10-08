@@ -35,7 +35,7 @@ export default function Countdown({ compact = false }: { compact?: boolean }) {
       <div style={{ textAlign: "center" }}>
         <span className="count-open">
           <span className="dot" style={{ width: 8, height: 8, borderRadius: "50%", background: "#fff" }} />
-          Founding doors are open — the first 100 spots are live
+          Founding doors are open. The first 100 spots are live.
         </span>
       </div>
     );
@@ -66,8 +66,8 @@ export default function Countdown({ compact = false }: { compact?: boolean }) {
             day: "numeric",
             year: "numeric",
           })}
-        </b>{" "}
-        — reserve now, spots are assigned in arrival order.
+        </b>
+        . Reserve now, spots are assigned in arrival order.
       </div>
     </>
   );

@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { clean, ok, bad, preflight } from "@/lib/signup";
+import { clean, ok, bad, preflight, signupDb } from "@/lib/signup";
 import { notifySignup } from "@/lib/email/teamNotify";
 import { sendPartnerConfirmation } from "@/lib/email/confirmations";
+import { consumeInviteLink } from "@/lib/inviteLink";
 
 export const runtime = "nodejs";
 
@@ -31,7 +31,10 @@ export async function POST(req: NextRequest) {
   const pre = preflight(req, body, email);
   if (pre.block) return pre.block;
 
-  const { error } = await supabaseAdmin()
+  const conn = signupDb();
+  if (conn.block) return conn.block;
+
+  const { error } = await conn.db
     .from("partner_applications")
     .insert({
       company_name: companyName,
@@ -55,7 +58,9 @@ export async function POST(req: NextRequest) {
     return bad("Something went wrong on our side. Please try again.", 500);
   }
 
+  const inviteId = await consumeInviteLink(req, "partner", email);
   await notifySignup("partner application", {
+    ...(inviteId ? { "Invite link": "yes (personal invitation)" } : {}),
     Company: companyName,
     Website: website,
     Category: category,

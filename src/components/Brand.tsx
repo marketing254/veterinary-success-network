@@ -34,9 +34,9 @@ export function PawGlyph({ className }: { className?: string }) {
 export default function Brand({ href = "/" }: { href?: string }) {
   return (
     <Link className="brand" href={href}>
-      <span className="mark">
+      <span className="mark mono">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/brand/vsn-appicon.png" alt="VSN" width={44} height={44} />
+        <img src="/brand/vsn-monogram-dark.png" alt="VSN" />
       </span>
       <span>
         <strong>Veterinary Success Network</strong>

@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import RecordsPage, { fmtDate, StatusBadge, Row, ActionResult } from "@/components/admin/RecordsPage";
+import LaunchEmailPanel from "@/components/admin/LaunchEmailPanel";
 
 async function activateMember(row: Row): Promise<ActionResult> {
   const res = await fetch("/api/admin/members", {
@@ -14,9 +16,12 @@ async function activateMember(row: Row): Promise<ActionResult> {
 }
 
 export default function ReservationsAdminPage() {
+  const [reloadKey, setReloadKey] = useState(0);
   return (
     <RecordsPage
-      title="Member reservations"
+      reloadKey={reloadKey}
+      header={<LaunchEmailPanel onDone={() => setReloadKey((k) => k + 1)} />}
+      title="Member waitlist"
       subtitle="Founding-spot waitlist, in arrival order. Activate as founding member creates the member record, flips the reservation to converted, and sends the welcome email."
       endpoint="/api/admin/reservations"
       searchPlaceholder="Search name, email or practice…"

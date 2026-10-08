@@ -34,10 +34,11 @@ export default function PartnerAgreementPage() {
       <h2>3. What it costs</h2>
       <p>Billed monthly through Stripe, on this ramp:</p>
       <ul>
-        <li>Months 1 to 6: $0</li>
-        <li>Months 7 to 12: $49/month</li>
-        <li>Month 13 onward: $199/month (Featured Partner)</li>
-        <li>Annual pre-pay = 2 months free.</li>
+        <li>First 6 months from the member launch date: $0 (free founding months)</li>
+        <li>Next 12 months: $39/month</li>
+        <li>After that: $149/month (Featured Partner)</li>
+        <li>Annual pre-pay = 2 months free, available from month 7.</li>
+        <li>Cancel before your first charge and nothing is billed. After the first charge, 30 days&apos; written notice applies.</li>
       </ul>
       <p>You&apos;ll see this pricing on the sign-up page before you pay. Nothing is a surprise.</p>
 

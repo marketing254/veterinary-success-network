@@ -74,7 +74,7 @@ export default function Home() {
       <header className="hero">
         <div className="wrap">
           <span className="eyebrow">
-            <span className="dot"></span> Founding cohort forming: first 100 lock $49/mo for life
+            <span className="dot"></span> Founding cohort forming: first 100 lock $29/mo for life
           </span>
           <h1>
             The only veterinary network where every practice problem gets a <em>written action plan</em>.
@@ -91,7 +91,7 @@ export default function Home() {
           </div>
           <div className="trustline">
             <span>✓ <b>Cancel anytime</b></span>
-            <span>✓ <b>Money-back guarantee</b></span>
+            <span>✓ <b>30-day money-back guarantee</b></span>
             <span>✓ <b>Real, considered replies</b></span>
           </div>
 
@@ -306,7 +306,7 @@ export default function Home() {
           </div>
           <div className="guarantee reveal">
             <PawGlyph className="ipaw" />
-            <b>Money-back guarantee</b> · cancel anytime · annual prepay = 2 months free.
+            <b>30-day money-back guarantee</b> · cancel anytime · annual prepay = 2 months free.
           </div>
         </div>
       </section>
@@ -414,7 +414,7 @@ export default function Home() {
                 <li>Featured expert profile</li>
                 <li>Warm leads to your calendar</li>
                 <li>Hotline referrals</li>
-                <li>Sell courses, keep 70%</li>
+                <li>Members book you directly</li>
               </ul>
               <Link className="btn glass" href="/experts">Apply as an expert</Link>
             </div>
@@ -450,7 +450,7 @@ export default function Home() {
         <div className="wrap">
           <div className="cta reveal">
             <h2>Claim one of the first 100 founding spots.</h2>
-            <p>$49/mo locked for life, a written plan for every problem, and deals that can cover your dues.</p>
+            <p>$29/mo locked for life, a written plan for every problem, and deals that can cover your dues.</p>
             <Link
               className="btn glass"
               href="/join?plan=founding"

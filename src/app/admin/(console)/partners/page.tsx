@@ -50,7 +50,8 @@ export default function PartnersAdminPage() {
       ]}
       actions={[
         { action: "start_review", label: "Start review", when: (s) => s === "new" },
-        { action: "approve", label: "Approve as partner (sends email)", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "approve", label: "Approve on the ladder plan ($39 x 12, then $149) and send email", variant: "primary", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✓ Approve" },
+        { action: "approve_flat", label: "Approve on the flat plan ($39, no increase) and send email", when: (s) => s === "new" || s === "in_review", withNote: true },
         { action: "decline", label: "Decline", variant: "danger", when: (s) => s === "new" || s === "in_review", withNote: true, quickLabel: "✕" },
         { action: "restore", label: "Reopen as new", when: (s) => s === "approved" || s === "declined", withNote: true },
       ]}

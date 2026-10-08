@@ -52,12 +52,11 @@ export default function ApplyExpertPage() {
                 <li>We build your full kit: video, guide, checklist, worksheet, deck, poster</li>
                 <li>You approve everything before it goes live</li>
                 <li>Members book straight onto your calendar; the hotline refers by fit</li>
-                <li>Sell your own courses, keep 70%</li>
               </ul>
               <div className="fine">
-                <b>What it costs:</b> $0 for months 1–6, then $49/mo (months 7–12), then $199/mo
-                standard, with the same Featured Expert benefits at every phase. Annual pre-pay
-                unlocks at month 7.
+                <b>What it costs:</b> $0 for your first 6 months from member launch, then $39/mo
+                flat with no increase, with the same Featured Expert benefits at every phase. Annual
+                pre-pay ($390/yr, 2 months free) unlocks at month 7.
               </div>
             </aside>
           </div>

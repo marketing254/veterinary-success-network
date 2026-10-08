@@ -34,10 +34,10 @@ export default function ExpertAgreementPage() {
       <h2>3. What it costs</h2>
       <p>Billed monthly through Stripe, on this ramp:</p>
       <ul>
-        <li>Months 1 to 6: $0</li>
-        <li>Months 7 to 12: $49/month</li>
-        <li>Month 13 onward: $199/month (standard)</li>
-        <li>Annual pre-pay = 2 months free.</li>
+        <li>First 6 months from the member launch date: $0 (free founding months)</li>
+        <li>After that: $39/month, flat, with no increase</li>
+        <li>Annual pre-pay: $390/year (2 months free), available from month 7.</li>
+        <li>Cancel before your first charge and nothing is billed. After the first charge, 30 days&apos; written notice applies.</li>
       </ul>
       <p>You&apos;ll see this pricing on the sign-up page before you pay. Nothing is a surprise.</p>
 
@@ -66,10 +66,6 @@ export default function ExpertAgreementPage() {
         <li>
           Members find you by category and contact you through your profile. We route member
           questions to you, but do not guarantee a number of leads.
-        </li>
-        <li>
-          You can list your own paid courses to members and keep 70% (we keep 30% to run the
-          platform, payments, and promotion).
         </li>
         <li>
           We do not offer category exclusivity for our experts; members choose who they want to

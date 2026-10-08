@@ -4,15 +4,49 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const NAV: [string, string, string?][] = [
-  ["/admin", "Dashboard"],
-  ["/admin/reservations", "Reservations", "reservations_open"],
-  ["/admin/members", "Members"],
-  ["/admin/experts", "Experts", "experts_new"],
-  ["/admin/partners", "Partners", "partners_new"],
-  ["/admin/free-kit", "Free kit"],
-  ["/admin/admins", "Admin team"],
-  ["/admin/audit-log", "Audit log"],
+type Item = [string, string, string?];
+const GROUPS: { label: string; items: Item[] }[] = [
+  { label: "Overview", items: [["/admin", "Dashboard"]] },
+  {
+    label: "People",
+    items: [
+      ["/admin/reservations", "Member waitlist", "reservations_open"],
+      ["/admin/members", "Members"],
+      ["/admin/experts", "Expert applications", "experts_new"],
+      ["/admin/experts-live", "Experts"],
+      ["/admin/partners", "Partner applications", "partners_new"],
+      ["/admin/partners-live", "Partners"],
+      ["/admin/founding", "Founding invites", "founding_invites_sent"],
+      ["/admin/invite-links", "Invite links"],
+      ["/admin/free-kit", "Free-kit leads"],
+    ],
+  },
+  {
+    label: "Content review",
+    items: [
+      ["/admin/kits", "Expert kits", "kits_pending"],
+      ["/admin/catalog", "Partner catalog", "catalog_pending"],
+      ["/admin/offers", "Partner offers", "offers_pending"],
+      ["/admin/broadcast", "Network feed"],
+    ],
+  },
+  {
+    label: "Engagement",
+    items: [
+      ["/admin/inquiries", "Inquiries", "inquiries_open"],
+      ["/admin/redemptions", "Redemptions"],
+      ["/admin/referrals", "Referrals", "referrals_due"],
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      ["/admin/email-previews", "Email drafts"],
+      ["/admin/admins", "Admin team"],
+      ["/admin/stripe-status", "Stripe status"],
+      ["/admin/audit-log", "Audit log"],
+    ],
+  },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -28,7 +62,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       .catch(() => router.replace("/admin/login"));
   }, [router]);
 
-  // Pending-count badges, refreshed every 90s.
   useEffect(() => {
     let alive = true;
     async function loadCounts() {
@@ -57,26 +90,31 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="adm">
       <aside className="adm-side">
         <Link className="brand" href="/admin">
-          <span className="mark">
+          <span className="mark mono">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/vsn-appicon.png" alt="VSN" width={44} height={44} />
+            <img src="/brand/vsn-monogram-dark.png" alt="VSN" />
           </span>
           <span>
             <strong>VSN Admin</strong>
-            <small>Waitlist phase console</small>
+            <small>Network console</small>
           </span>
         </Link>
-        <div className="tag">Launch waitlist</div>
         <nav>
-          {NAV.map(([href, label, countKey]) => {
-            const n = countKey ? counts[countKey] : undefined;
-            return (
-              <Link key={href} href={href} className={`adm-link${pathname === href ? " on" : ""}`}>
-                {label}
-                {typeof n === "number" && n > 0 && <span className="cnt">{n}</span>}
-              </Link>
-            );
-          })}
+          {GROUPS.map((g) => (
+            <div key={g.label} style={{ display: "contents" }}>
+              <div className="adm-group">{g.label}</div>
+              {g.items.map(([href, label, countKey]) => {
+                const n = countKey ? counts[countKey] : undefined;
+                const on = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+                return (
+                  <Link key={href} href={href} className={`adm-link${on ? " on" : ""}`}>
+                    {label}
+                    {typeof n === "number" && n > 0 && <span className="cnt">{n}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
         <div className="adm-me">
           {me ? (

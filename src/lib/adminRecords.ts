@@ -20,7 +20,8 @@ export type EntityConfig = {
     adminEmail: string,
     row: Record<string, any>,
     action: string,
-    priorStatus: string
+    priorStatus: string,
+    body: Record<string, unknown>
   ) => Promise<void>;
 };
 
@@ -95,7 +96,7 @@ export function makeHandlers(cfg: EntityConfig) {
     await logAction(session.email, cfg.entityType, id, action, note || undefined);
     if (cfg.afterAction) {
       try {
-        await cfg.afterAction(session.email, data, action, prior.status);
+        await cfg.afterAction(session.email, data, action, prior.status, body);
       } catch (err) {
         console.error(`${cfg.table} afterAction failed (action still applied):`, err);
       }

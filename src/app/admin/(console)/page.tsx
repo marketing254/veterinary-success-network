@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { fmtDate, StatusBadge } from "@/components/admin/RecordsPage";
 
 type Overview = {
+  launchEnabled?: boolean;
   counts: Record<string, number>;
   recent: {
     reservations: any[];
@@ -37,11 +38,41 @@ export default function DashboardPage() {
       </div>
       {err && <div className="adm-msg show err">Couldn&apos;t load the overview. Is Supabase configured?</div>}
 
+      {data && (
+        <div className="adm-launch">
+          <span>Member launch is <b>{data.launchEnabled ? "ON" : "OFF"}</b>. {data.launchEnabled ? "Members can be invited from the waitlist page." : "Members get nothing beyond the waitlist confirmation until you flip MEMBER_LAUNCH_ENABLED in Vercel."}</span>
+          <Link className="adm-btn lime" href="/admin/reservations">Open the waitlist</Link>
+        </div>
+      )}
+
+      <div className="adm-stats">
+        <div className={`adm-stat${(c.kits_pending ?? 0) + (c.catalog_pending ?? 0) + (c.offers_pending ?? 0) > 0 ? " alert" : ""}`}>
+          <div className="v">{(c.kits_pending ?? 0) + (c.catalog_pending ?? 0) + (c.offers_pending ?? 0)}</div>
+          <div className="t">Awaiting review</div>
+          <div className="s">{c.kits_pending ?? 0} kits · {c.catalog_pending ?? 0} catalog · {c.offers_pending ?? 0} offers</div>
+        </div>
+        <div className={`adm-stat${(c.inquiries_open ?? 0) > 0 ? " alert" : ""}`}>
+          <div className="v">{c.inquiries_open ?? 0}</div>
+          <div className="t">Open inquiries</div>
+          <div className="s">waiting on an expert or partner</div>
+        </div>
+        <div className="adm-stat">
+          <div className="v">{c.experts_live ?? 0}</div>
+          <div className="t">Live experts</div>
+          <div className="s">{c.experts_founding ?? 0} lifetime free of 20</div>
+        </div>
+        <div className="adm-stat">
+          <div className="v">{c.partners_live ?? 0}</div>
+          <div className="t">Live partners</div>
+          <div className="s">{c.founding_invites_sent ?? 0} founding invites out · {c.referrals_due ?? 0} referral payouts due</div>
+        </div>
+      </div>
+
       <div className="adm-stats">
         <div className="adm-stat">
           <div className="v">{c.reservations_total ?? "…"}</div>
           <div className="t">Member reservations</div>
-          <div className="s">{c.reservations_open ?? 0} still reserved · first 100 lock $49</div>
+          <div className="s">{c.reservations_open ?? 0} still reserved · first 100 lock $29</div>
         </div>
         <div className="adm-stat">
           <div className="v">{c.members_total ?? "…"}</div>

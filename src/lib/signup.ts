@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { hashIp, requestIp } from "./ipHash";
 import { rateLimit } from "./rateLimit";
+import { supabaseAdmin } from "./supabaseAdmin";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -38,4 +40,18 @@ export function preflight(
 
 export function isUniqueViolation(error: { code?: string } | null): boolean {
   return !!error && error.code === "23505";
+}
+
+/**
+ * Service-role client for public signup routes, or a friendly JSON 500 when
+ * Supabase env is missing/misnamed (so a config mistake never surfaces as a
+ * blank crash to the visitor).
+ */
+export function signupDb(): { db: SupabaseClient; block?: undefined } | { block: NextResponse } {
+  try {
+    return { db: supabaseAdmin() };
+  } catch (err) {
+    console.error("Supabase not configured (check env var names/values):", err);
+    return { block: bad("Something went wrong on our side. Please try again.", 500) };
+  }
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const DUES = 588;
+const DUES = 348;
 
 export default function RoiCalc() {
   const [deals, setDeals] = useState(2);
@@ -52,7 +52,7 @@ export default function RoiCalc() {
           <div className="crow" style={{ marginBottom: 0 }}>
             <div className="lab">
               <span>Founding membership</span>
-              <output>$49/mo · $588/yr</output>
+              <output>$29/mo · $348/yr</output>
             </div>
           </div>
         </div>

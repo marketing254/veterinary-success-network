@@ -1,0 +1,56 @@
+/* Admin sign-in: split screen, brand panel + card. Scoped under .alx. */
+.alx{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;background:#f6fbf0;font-family:var(--font-body),system-ui,sans-serif;}
+.alx-brand{position:relative;overflow:hidden;background:linear-gradient(160deg,#1c3310 0%,#1f3d13 55%,#2f6a1c 120%);color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:44px 52px;}
+.alx-brand:before{content:"";position:absolute;right:-140px;top:-120px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(139,227,23,.28),transparent 62%);}
+.alx-brand:after{content:"";position:absolute;left:-80px;bottom:-140px;width:420px;height:420px;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%238BE317' fill-opacity='.12'><ellipse cx='34' cy='40' rx='8' ry='11'/><ellipse cx='52' cy='33' rx='8' ry='12'/><ellipse cx='70' cy='42' rx='7.5' ry='10.5'/><path d='M52 50c-12 0-19 9-16 19 2 8 12 11 16 11s14-3 16-11c3-10-4-19-16-19z'/></svg>") no-repeat center/contain;transform:rotate(-20deg);}
+.alx-logo{position:relative;display:flex;align-items:center;gap:14px;}
+.alx-logo img{height:38px;width:auto;filter:brightness(0) invert(1);}
+.alx-logo strong{display:block;font-family:var(--font-display),Georgia,serif;font-size:17px;font-weight:600;line-height:1.1;}
+.alx-logo small{display:block;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8BE317;font-weight:700;margin-top:4px;}
+.alx-copy{position:relative;max-width:460px;}
+.alx-copy .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8BE317;font-weight:700;margin-bottom:16px;}
+.alx-copy .eyebrow i{width:8px;height:8px;border-radius:50%;background:#8BE317;box-shadow:0 0 0 4px rgba(139,227,23,.25);}
+.alx-copy h1{font-family:var(--font-display),Georgia,serif;font-size:40px;font-weight:600;line-height:1.08;margin:0 0 14px;}
+.alx-copy p{font-size:15.5px;line-height:1.6;color:rgba(255,255,255,.8);margin:0 0 24px;}
+.alx-list{display:grid;gap:10px;}
+.alx-list div{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;font-size:13.5px;}
+.alx-list span.ic{width:30px;height:30px;border-radius:9px;background:rgba(139,227,23,.18);color:#8BE317;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none;}
+.alx-foot{position:relative;font-size:12px;color:rgba(255,255,255,.55);}
+.alx-side{display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+.alx-card{width:100%;max-width:440px;background:#fff;border:1px solid #e4ecd9;border-radius:26px;padding:38px 36px 30px;box-shadow:0 30px 70px rgba(28,51,16,.12);}
+.alx-card .hd{margin-bottom:22px;}
+.alx-card .hd .tag{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#3f6b1a;background:#eafad6;border-radius:30px;padding:5px 12px;margin-bottom:12px;}
+.alx-card h2{font-family:var(--font-display),Georgia,serif;font-size:27px;font-weight:600;color:#1c3310;margin:0 0 6px;line-height:1.1;}
+.alx-card .sub{font-size:14px;color:#6f7d64;line-height:1.55;margin:0;}
+.alx-card .sub b{color:#1c3310;font-weight:600;}
+.alx-field{margin-bottom:16px;}
+.alx-field label{display:block;font-size:13px;font-weight:600;color:#1c3310;margin-bottom:7px;}
+.alx-input{position:relative;}
+.alx-input svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#8a9780;}
+.alx-input input{width:100%;background:#fbfdf8;border:1px solid #dfe8d8;border-radius:13px;padding:13px 14px 13px 42px;font:inherit;font-size:15px;color:#1f2b18;outline:none;transition:.15s;}
+.alx-input input:focus{border-color:#55B900;background:#fff;box-shadow:0 0 0 4px rgba(85,185,0,.14);}
+.alx-otp{display:flex;gap:8px;justify-content:space-between;}
+.alx-otp input{width:100%;aspect-ratio:1/1.15;max-width:58px;text-align:center;font:inherit;font-size:24px;font-weight:700;color:#1c3310;background:#fbfdf8;border:1.5px solid #dfe8d8;border-radius:13px;outline:none;transition:.15s;caret-color:#3BAB00;}
+.alx-otp input:focus{border-color:#55B900;background:#fff;box-shadow:0 0 0 4px rgba(85,185,0,.14);}
+.alx-otp input.filled{border-color:#9bdd62;background:#f3fbe8;}
+.alx-btn{width:100%;border:none;cursor:pointer;border-radius:14px;padding:14px 20px;font:inherit;font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,#55B900,#3BAB00);box-shadow:0 12px 28px rgba(85,185,0,.3);transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.alx-btn:hover{transform:translateY(-1px);box-shadow:0 16px 34px rgba(85,185,0,.36);}
+.alx-btn:disabled{opacity:.55;transform:none;cursor:default;box-shadow:none;}
+.alx-msg{border-radius:12px;padding:11px 14px;font-size:13.5px;line-height:1.5;margin:0 0 16px;display:flex;gap:10px;align-items:flex-start;}
+.alx-msg.ok{background:#eafad6;color:#2f5d12;}
+.alx-msg.err{background:#fdece6;color:#9a3b1e;}
+.alx-msg.err a{color:#9a3b1e;font-weight:700;}
+.alx-links{display:flex;gap:18px;justify-content:center;margin-top:16px;}
+.alx-links button{background:none;border:none;color:#3BAB00;font-weight:700;cursor:pointer;font:inherit;font-size:13px;}
+.alx-links button:disabled{opacity:.5;cursor:default;}
+.alx-secure{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid #eef3e8;font-size:12px;color:#8a9780;}
+.alx-secure svg{width:14px;height:14px;}
+@media(max-width:900px){
+  .alx{grid-template-columns:1fr;}
+  .alx-brand{padding:28px 22px;min-height:0;}
+  .alx-copy h1{font-size:28px;}
+  .alx-copy p{font-size:14px;margin-bottom:0;}
+  .alx-list,.alx-foot{display:none;}
+  .alx-side{padding:24px 16px 40px;}
+  .alx-card{padding:28px 22px 24px;border-radius:22px;}
+}
