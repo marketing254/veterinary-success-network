@@ -12,6 +12,7 @@ import { providerRampRows, providerFreePeriodEnd, freeMonthsFor, PROVIDER_FREE_M
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const CODE_RE = /^[A-Za-z0-9]{10,40}$/;
 

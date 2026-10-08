@@ -24,7 +24,7 @@ export default function ExpertDashboard() {
 
   return (
     <div className="xp-grid" style={{ gap: 18 }}>
-      <section className="xp-card hero">
+      <section className="xp-card xp-hero">
         <h2>Welcome back, {first}.</h2>
         <p>
           {me.listable

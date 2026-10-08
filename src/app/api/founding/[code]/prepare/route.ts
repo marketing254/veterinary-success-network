@@ -8,6 +8,7 @@ import { INVITE_COLS, type Invite } from "@/lib/founding/invites";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const STD_ERR = "Something went wrong on our side. Nothing was charged. Please try again, or email support@veterinarysuccessnetwork.com.";
 
