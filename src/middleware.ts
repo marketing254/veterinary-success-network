@@ -53,7 +53,7 @@ function securityHeaders(res: NextResponse, supabaseUrl: string | undefined) {
     `connect-src 'self' ${supaHttps} ${supaWss} https://vercel.live wss://*.pusher.com https://api.stripe.com https://js.stripe.com https://m.stripe.network https://m.stripe.com https://r.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://www.googletagmanager.com https://analytics.google.com https://fonts.googleapis.com https://fonts.gstatic.com`,
     `frame-src 'self' ${supaHttps} https://vercel.live https://js.stripe.com https://hooks.stripe.com https://*.js.stripe.com https://m.stripe.network https://checkout.stripe.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' data: https://fonts.gstatic.com",
+    "font-src 'self' data: https://fonts.gstatic.com https://vercel.live",
     "img-src 'self' data: blob: https:",
     "media-src 'self' blob: https:",
     "object-src 'none'",
