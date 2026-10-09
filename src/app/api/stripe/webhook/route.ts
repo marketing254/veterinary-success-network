@@ -155,7 +155,12 @@ async function handle(event: Stripe.Event): Promise<Target> {
     const patch = subscriptionPatch(hydrated, pm?.card ? { brand: pm.card.brand, last4: pm.card.last4 } : undefined);
     if (event.type === "customer.subscription.deleted") {
       patch.subscription_status = "canceled";
-      if (t.kind === "partner") patch.status = "churned";
+      if (t.kind === "partner") {
+        // Only a partner who finished onboarding (signed agreement) churns. A subscription or
+        // customer deleted before that (test cleanup, abandoned card step) just clears billing.
+        const { data: p } = await db.from("partners").select("agreement_signed_at").eq("id", t.id).maybeSingle();
+        if (p?.agreement_signed_at) patch.status = "churned";
+      }
       if (t.kind === "member") patch.status = "paused";
     }
     await db.from(table).update(patch).eq("id", t.id);
