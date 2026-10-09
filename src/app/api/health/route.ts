@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { renderPartnerAgreementPdf } from "@/lib/pdf/agreementPdf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -69,6 +70,16 @@ async function liveChecks() {
       : ["agreements", "avatars", "partner-logos", "partner-media", "expert-resources"].map((b) => `${b}:${names.has(b) ? "ok" : "MISSING"}`).join(" ");
   } catch (e) {
     out.storageBuckets = `FAIL: ${(e as Error).message}`;
+  }
+  try {
+    const t0 = Date.now();
+    const buf = await renderPartnerAgreementPdf(
+      { companyName: "Health Check Co", contactName: "Health Check", email: "health@example.com", category: "Marketing & growth", memberOffer: null, rate: "ladder", freeUntil: new Date() },
+      null
+    );
+    out.agreementPdf = `ok (${buf.length} bytes, ${Date.now() - t0}ms)`;
+  } catch (e) {
+    out.agreementPdf = `FAIL: ${(e as Error)?.message ?? String(e)}`;
   }
   const sk = process.env.STRIPE_SECRET_KEY ?? "";
   const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
